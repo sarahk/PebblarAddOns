@@ -1,0 +1,107 @@
+// ==UserScript==
+// @name         Add Total Mileage to Pebblar
+// @namespace    http://tampermonkey.net/
+// @version      0.1
+// @description  try to take over the world!
+// @author       Sarah King
+// @match        https://pebblar.com/trip/*
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=benjaminpritchard.org
+// @grant        none
+// @require      https://code.jquery.com/jquery-3.6.0.min.js
+// ==/UserScript==
+
+(function() {
+    'use strict';
+
+    function scriptWrapper () {
+
+        const pathArray = window.location.pathname.split('/');
+        const pageId = pathArray[2];
+        let ideas;
+        let downloadAdded = false;
+        console.log('page id:', pageId);
+
+        //--- DO YOUR OTHER STUFF HERE.
+        console.log ('Doing stuff outside Ajax.');
+
+        const downloadCSV = () => {
+            var csv = ideas.map(function(d){
+                let {ideaBuddies, logisticId,customLogistic, ...row} = d;
+                console.log(row);
+                console.log(JSON.stringify(Object.values(row)));
+                return JSON.stringify(Object.values(row));
+            })
+            .join('\n')
+            .replace(/(^\[)|(\]$)/mg, '');
+            console.log(ideas);
+            console.log(csv);
+        }
+
+
+
+        const addButton = () => {
+            if (downloadAdded) return;
+
+            const buttons = document.querySelector("#app > div > div:nth-child(1) > div:nth-child(1) > div:nth-child(2)");
+            console.log(buttons);
+            let div1 = document.createElement("div");
+            console.log('div1', div1);
+            div1.classList.add('ButtonWrapper-iIRbUd','bgUOeR');
+            div1.setAttribute('id','download');
+            let div2 = document.createElement("div");
+            let div3 = document.createElement("div");
+            div3.append('Download');
+            div2.append(div3);
+            div1.append(div2);
+            buttons.append(div1);
+            console.log(div1);
+            downloadAdded = true;
+            document.getElementById("download").addEventListener("click", downloadCSV);
+        };
+
+        var origOpen = XMLHttpRequest.prototype.open;
+        XMLHttpRequest.prototype.open = function() {
+            this.addEventListener('load', function() {
+                if (this.responseURL === `https://pebblar.com/api/v3/trip/${pageId}?asyncLogistics=true`){
+                    const json = JSON.parse(this.responseText);
+                    ideas = json.ideas;
+                    addButton();
+
+               
+
+                    console.log('PebblarAddon has set ideas');
+                    //const cityList = $('#cityList');
+                    const eachCity = document.querySelector('#cityList > div:nth-child(1) > div:nth-child(2) > div > div:nth-child(179)');
+                    console.log('eachCity:',eachCity, eachCity.length);
+                    //eachCity.css( "background-color", "red" );
+                    $( eachCity ).each(function( index ) {
+                        console.log( index , ": " , this );
+                        const temp = $(this).children("> div > div:nth-child(2) > div > div.nth-child(1) > div:nth-child(1)");
+                        //document.querySelector("div:nth-child(179) > div > div:nth-child(2) > div > div:nth-child(1) > div:nth-child(1)")
+                        console.log('temp:',temp);
+                    });
+                }
+            });
+            origOpen.apply(this, arguments);
+        };
+
+
+      
+
+    }
+    //https://raw.githubusercontent.com/sarahk/PebblarAddOns/11de981cd9a76cb965208304bcb408cbb8e13dc5/sum.png
+    // this just adds it to the page
+    function addJS_Node (text, s_URL, funcToRun) {
+        const D = document;
+        const scriptNode = D.createElement ('script');
+        scriptNode.type = "text/javascript";
+        if (text) scriptNode.textContent = text;
+        if (s_URL) scriptNode.src = s_URL;
+        if (funcToRun) scriptNode.textContent = '(' + funcToRun.toString() + ')()';
+
+        let targ = D.getElementsByTagName('head')[0] || D.body || D.documentElement;
+        targ.appendChild (scriptNode);
+    }
+
+    addJS_Node (null, null, scriptWrapper);
+})();
