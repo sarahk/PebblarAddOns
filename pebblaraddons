@@ -35,6 +35,10 @@
             .replace(/(^\[)|(\]$)/mg, '');
             console.log(ideas);
             console.log(csv);
+            navigator.clipboard.writeText(csv);
+
+            /* Alert the copied text */
+            alert("Ready to paste into csv");
         }
 
 
