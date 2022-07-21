@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Export List of Cities from Pebblar
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      1.0
 // @description  try to take over the world!
 // @author       Sarah King
 // @match        https://pebblar.com/trip/*
