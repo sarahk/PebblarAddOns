@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         Add Total Mileage to Pebblar
+// @name         Export List of Cities from Pebblar
 // @namespace    http://tampermonkey.net/
 // @version      0.1
 // @description  try to take over the world!
@@ -19,12 +19,8 @@
         const pageId = pathArray[2];
         let ideas;
         let downloadAdded = false;
-        console.log('page id:', pageId);
 
-        //--- DO YOUR OTHER STUFF HERE.
-        console.log ('Doing stuff outside Ajax.');
-
-        const downloadCSV = () => {
+        function downloadCSV() {
             var csv = ideas.map(function(d){
                 let {ideaBuddies, logisticId,customLogistic, ...row} = d;
                 console.log(row);
@@ -33,10 +29,17 @@
             })
             .join('\n')
             .replace(/(^\[)|(\]$)/mg, '');
+            console.log('if youd rather get the info from the console');
             console.log(ideas);
             console.log(csv);
-            navigator.clipboard.writeText(csv);
-
+            //navigator.clipboard.writeText(csv);
+            let dummyInput = document.querySelector("#dummyinput");
+            console.log(dummyInput);
+            dummyInput.value = csv;
+            dummyInput.removeAttribute('hidden');
+            dummyInput.select();
+            document.execCommand("copy");
+            dummyInput.setAttribute('hidden','hidden');
             /* Alert the copied text */
             alert("Ready to paste into csv");
         }
@@ -47,9 +50,7 @@
             if (downloadAdded) return;
 
             const buttons = document.querySelector("#app > div > div:nth-child(1) > div:nth-child(1) > div:nth-child(2)");
-            console.log(buttons);
             let div1 = document.createElement("div");
-            console.log('div1', div1);
             div1.classList.add('ButtonWrapper-iIRbUd','bgUOeR');
             div1.setAttribute('id','download');
             let div2 = document.createElement("div");
@@ -58,7 +59,11 @@
             div2.append(div3);
             div1.append(div2);
             buttons.append(div1);
-            console.log(div1);
+            // we need to preserve the line breaks so textarea, and not input
+            let dummyInput = document.createElement('textarea');
+            dummyInput.setAttribute('id','dummyinput');
+            dummyInput.setAttribute('hidden','hidden');
+            buttons.append(dummyInput);
             downloadAdded = true;
             document.getElementById("download").addEventListener("click", downloadCSV);
         };
@@ -71,26 +76,24 @@
                     ideas = json.ideas;
                     addButton();
 
-               
+                    /*
+                    this approach was to show on the pebblar screen but the distance is calculated separately and I couldn't seem to
+                    find the relevant file easily.
 
-                    console.log('PebblarAddon has set ideas');
-                    //const cityList = $('#cityList');
                     const eachCity = document.querySelector('#cityList > div:nth-child(1) > div:nth-child(2) > div > div:nth-child(179)');
-                    console.log('eachCity:',eachCity, eachCity.length);
-                    //eachCity.css( "background-color", "red" );
                     $( eachCity ).each(function( index ) {
                         console.log( index , ": " , this );
                         const temp = $(this).children("> div > div:nth-child(2) > div > div.nth-child(1) > div:nth-child(1)");
-                        //document.querySelector("div:nth-child(179) > div > div:nth-child(2) > div > div:nth-child(1) > div:nth-child(1)")
                         console.log('temp:',temp);
                     });
+                    */
                 }
             });
             origOpen.apply(this, arguments);
         };
 
 
-      
+
 
     }
     //https://raw.githubusercontent.com/sarahk/PebblarAddOns/11de981cd9a76cb965208304bcb408cbb8e13dc5/sum.png
