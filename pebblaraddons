@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name         Export List of Cities from Pebblar
-// @namespace    http://tampermonkey.net/
-// @version      1.0
-// @description  try to take over the world!
+// @namespace    http://itamer.com/
+// @version      1.1
+// @description  Step 1 in making a mileage plan so you can schedule repairs, maintenance on long trips. This is not an official Pebblar script.
 // @author       Sarah King
 // @match        https://pebblar.com/trip/*
-// @icon         https://www.google.com/s2/favicons?sz=64&domain=benjaminpritchard.org
+// @icon         https://assets.pebblar.com/landing/favicon-96.png
 // @grant        none
 // @require      https://code.jquery.com/jquery-3.6.0.min.js
 // ==/UserScript==
@@ -22,7 +22,8 @@
 
         function downloadCSV() {
             var csv = ideas.map(function(d){
-                let {ideaBuddies, logisticId,customLogistic, ...row} = d;
+                // take out the lists, they won't csv well and aren't needed
+                let {ideaBuddies, logisticId,customLogistic, openingHoursJson, ...row} = d;
                 console.log(row);
                 console.log(JSON.stringify(Object.values(row)));
                 return JSON.stringify(Object.values(row));
